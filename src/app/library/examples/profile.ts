@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable, of } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { User, Personal, ContactInfo, Address, Transaction } from "./models";
 import { Teller } from "./teller";
 
