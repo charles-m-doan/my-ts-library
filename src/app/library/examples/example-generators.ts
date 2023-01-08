@@ -84,6 +84,10 @@ export function createExampleTransaction(): Transaction {
     return createDefaultExamples().transaction;
 }
 
+export function createExampleTeller(): Teller {
+    return new Teller();
+}
+
 export function createExampleProfile(): Profile {
     const examples = createDefaultExamples();
     const teller = new Teller();
