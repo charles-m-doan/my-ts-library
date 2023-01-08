@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { createExampleTeller } from './example-generators';
 import { Teller } from './teller';
 
 @Injectable({
@@ -18,5 +17,9 @@ export class TransactionService {
 
   public updateTeller(teller: Teller): void {
     this._teller.next(teller);
+  }
+
+  public getId(): string {
+    return '12345';
   }
 }

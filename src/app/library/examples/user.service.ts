@@ -28,11 +28,17 @@ export class UserService {
     this.transactionService.teller$.subscribe((teller) => {
       this.updateProfile(teller);
     });
+
+    this.transactionService.updateTeller(new Teller());
   }
 
   private updateProfile(teller: Teller): void {
     const currentProfile: Profile = this._profile.value;
     const updateProfile: Profile = new Profile(this.id, this._user.value, teller, currentProfile.getFriendCount());
     this._profile.next(updateProfile);
+  }
+
+  public getTransactionId(): string {
+    return this.transactionService.getId();
   }
 }
