@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { TransactionService } from './transaction.service';
 import { UserService } from './user.service';
-import { MockProvider, ngMocks } from 'ng-mocks';
+import { ngMocks } from 'ng-mocks';
 import { Teller } from './teller';
 import { BehaviorSubject } from 'rxjs';
+import { createMockProvider } from '../test-util';
+import { ExampleService } from './example.service';
 
 describe('UserService', () => {
   let service: UserService;
@@ -14,7 +16,8 @@ describe('UserService', () => {
     console.log('parent beforeEach: ' + parent);
     TestBed.configureTestingModule({
       providers: [
-        MockProvider(TransactionService, { teller$: new BehaviorSubject(new Teller()) })
+        createMockProvider(TransactionService, { teller$: new BehaviorSubject(new Teller()) }),
+        createMockProvider(ExampleService)
       ]
     });
     ngMocks.autoSpy('jasmine');

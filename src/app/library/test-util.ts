@@ -1,3 +1,6 @@
+import { Provider } from "@angular/core";
+import { Type, MockProvider } from "ng-mocks";
+
 export function extractName(input: any): string {
     if (input == null) {
         return 'unknown';
@@ -22,4 +25,8 @@ export function isClass(input: any): boolean {
     } catch {
         return false;
     }
+}
+
+export function createMockProvider<T>(serviceType: Type<T>, mockData: any = {}): Provider {
+    return MockProvider(serviceType, mockData);
 }
