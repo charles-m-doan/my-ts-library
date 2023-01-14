@@ -13,7 +13,6 @@ describe('UserService', () => {
 
   beforeEach(() => {
     parent++;
-    console.log('parent beforeEach: ' + parent);
     TestBed.configureTestingModule({
       providers: [
         // TODO: Modify createMockProvider so that it is unecessary to supply a behavior subject every time.
@@ -39,7 +38,6 @@ describe('UserService', () => {
 
     beforeEach(() => {
       nested++;
-      console.log('nested beforeEach 1: ' + nested);
     });
 
     it('should return 12345', () => {
@@ -81,7 +79,6 @@ describe('UserService', () => {
 
     beforeEach(() => {
       nested++;
-      console.log('nested beforeEach 2: ' + nested);
     });
 
     it('should return 12345', () => {
