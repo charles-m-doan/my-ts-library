@@ -89,8 +89,5 @@ export function createExampleTeller(): Teller {
 }
 
 export function createExampleProfile(): Profile {
-    const examples = createDefaultExamples();
-    const teller = new Teller();
-
-    return new Profile('1', examples.user, teller, 5);
+    return new Profile('1', createDefaultExamples().user, new Teller(), 5);
 }

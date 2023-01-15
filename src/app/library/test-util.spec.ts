@@ -1,7 +1,8 @@
+import { BehaviorSubject } from "rxjs";
 import { createExamplePersonal, createExampleProfile } from "./examples/example-generators";
 import { Personal } from "./examples/models";
 import { Profile } from "./examples/profile";
-import { extractPropertyTypeName, isClass, overwritePropertiesOfTarget } from "./test-util";
+import { extractPropertyTypeName, isClass, mapPropertiesToObject, overwritePropertiesOfTarget, Property } from "./test-util";
 
 describe('extractName', () => {
     it('should return "unknown" for null input', () => {
@@ -125,3 +126,27 @@ describe("overwritePropertiesOfTarget", () => {
 
 });
 
+describe('mapPropertiesToObject', () => {
+    let properties: Property[];
+    beforeEach(() => {
+        properties = [
+            { name: 'observable1$', value: new BehaviorSubject<boolean>(false) },
+            { name: 'observable2$', value: new BehaviorSubject<number>(7) },
+            { name: 'property1', value: 'value1' },
+            { name: 'property2', value: 'value2' }
+        ];
+    });
+
+    it('should map properties to an object', () => {
+        const object = mapPropertiesToObject(properties);
+        expect(object.observable1$).toEqual(new BehaviorSubject<boolean>(false));
+        expect(object.observable2$).toEqual(new BehaviorSubject<number>(7));
+        expect(object.property1).toEqual('value1');
+        expect(object.property2).toEqual('value2');
+    });
+
+    it('should return an empty object when properties array is empty', () => {
+        const object = mapPropertiesToObject([]);
+        expect(object).toEqual({});
+    });
+});

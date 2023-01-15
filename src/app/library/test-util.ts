@@ -31,17 +31,21 @@ export function assembleMockData<T>(providerType: Type<T>, mockData: any = {}): 
     return assembledData;
 }
 
+export function getInferredPropertiesForProvider<T>(type: Type<T>): Property[] {
+    return [];
+}
+
 export function getDefaultPropertiesForProvider<T>(type: Type<T>): Property[] {
     const properties: Property[] = DEFAULT_MOCK_PROPERTIES_MAP.get(type) || [];
     return cloneDeep(properties);
 }
 
-export function getInferredPropertiesForProvider<T>(type: Type<T>): Property[] {
-    return [];
-}
-
 export function mapPropertiesToObject(properties: Property[]): any {
-    return {};
+    const object: any = {};
+    properties.forEach(property => {
+        object[property.name] = property.value;
+    });
+    return object;
 }
 
 export function overwritePropertiesOfTarget(source: any, target: any): any {
