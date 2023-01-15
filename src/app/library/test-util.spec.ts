@@ -1,49 +1,49 @@
 import { createExamplePersonal, createExampleProfile } from "./examples/example-generators";
 import { Personal } from "./examples/models";
 import { Profile } from "./examples/profile";
-import { extractName, isClass } from "./test-util";
+import { extractPropertyTypeName, isClass, overwritePropertiesOfTarget } from "./test-util";
 
 describe('extractName', () => {
     it('should return "unknown" for null input', () => {
-        expect(extractName(null)).toEqual('unknown');
+        expect(extractPropertyTypeName(null)).toEqual('unknown');
     });
 
     it('should return "unknown" for undefined input', () => {
-        expect(extractName(null)).toEqual('unknown');
+        expect(extractPropertyTypeName(null)).toEqual('unknown');
     });
 
     it('should return "Object" for {} input', () => {
-        expect(extractName({})).toEqual('Object');
+        expect(extractPropertyTypeName({})).toEqual('Object');
     });
 
     it('should return "string" for string input', () => {
-        expect(extractName('hello')).toEqual('string');
+        expect(extractPropertyTypeName('hello')).toEqual('string');
     });
 
     it('should return "number" for number input', () => {
-        expect(extractName(123)).toEqual('number');
+        expect(extractPropertyTypeName(123)).toEqual('number');
     });
 
     it('should return "boolean" for boolean input', () => {
-        expect(extractName(true)).toEqual('boolean');
+        expect(extractPropertyTypeName(true)).toEqual('boolean');
     });
 
     it('should return "Date" for Date input', () => {
-        expect(extractName(new Date())).toEqual('Date');
+        expect(extractPropertyTypeName(new Date())).toEqual('Date');
     });
 
     it('should return "Array" for array input', () => {
-        expect(extractName([1, 2, 3])).toEqual('Array');
+        expect(extractPropertyTypeName([1, 2, 3])).toEqual('Array');
     });
 
     it('should return "Object" for Personal input', () => {
         const personal: Personal = createExamplePersonal();
-        expect(extractName(personal)).toEqual('Object');
+        expect(extractPropertyTypeName(personal)).toEqual('Object');
     });
 
     it('should return "Profile" for Profile input', () => {
         const profile: Profile = createExampleProfile();
-        expect(extractName(profile)).toEqual('Profile');
+        expect(extractPropertyTypeName(profile)).toEqual('Profile');
     });
 });
 
@@ -84,3 +84,44 @@ describe('isClass', () => {
         expect(isClass(obj)).toBe(true);
     });
 });
+
+describe("overwritePropertiesOfTarget", () => {
+    let source: any;
+    let target: any;
+
+    beforeEach(() => {
+        source = { a: 1, b: 'string' };
+        target = { c: true, d: 4 };
+    });
+
+    it("should return target object", () => {
+        const result = overwritePropertiesOfTarget(source, target);
+        expect(result).toBe(target);
+    });
+
+    it("should copy all properties from source to target", () => {
+        const result = overwritePropertiesOfTarget(source, target);
+        expect(result).toEqual({ a: 1, b: 'string', c: true, d: 4 });
+    });
+
+    it("should overwrite properties of target", () => {
+        const result = overwritePropertiesOfTarget(source, target);
+        expect(result).toEqual({ a: 1, b: 'string', c: true, d: 4 });
+    });
+
+    it("should copy complex object properties", () => {
+        source = { a: 1, b: { x: 2, y: 'complex' } };
+        target = { c: 3, d: 4 };
+        const result = overwritePropertiesOfTarget(source, target);
+        expect(result).toEqual({ a: 1, b: { x: 2, y: 'complex' }, c: 3, d: 4 });
+    });
+
+    it("should handle duplicate properties", () => {
+        source = { a: 1, b: 'string', c: { x: 2, y: 'complex' }, d: 'duplicate' };
+        target = { a: 10, b: true, c: { x: 20, y: 'not complex' }, d: 'duplicate' };
+        const result = overwritePropertiesOfTarget(source, target);
+        expect(result).toEqual({ a: 1, b: 'string', c: { x: 2, y: 'complex' }, d: 'duplicate' });
+    });
+
+});
+
