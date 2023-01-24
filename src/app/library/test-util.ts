@@ -43,19 +43,19 @@ export function overwritePropertiesOfTarget(source: any, target: any): any {
 }
 
 
-export function findMdmContractIdentifier(obj, searched = new Set()) {
+export function findFieldValue(obj, fieldName, searched = new Set()) {
     if (searched.has(obj)) {
         return null;
     }
     searched.add(obj);
 
-    if (obj.hasOwnProperty('mdmContractIdentifier')) {
-        return obj.mdmContractIdentifier;
+    if (obj.hasOwnProperty(fieldName)) {
+        return obj[fieldName];
     }
 
     for (let key in obj) {
         if (typeof obj[key] === 'object') {
-            let result = findMdmContractIdentifier(obj[key], searched);
+            let result = findFieldValue(obj[key], fieldName, searched);
             if (result) {
                 return result;
             }
@@ -64,3 +64,4 @@ export function findMdmContractIdentifier(obj, searched = new Set()) {
 
     return null;
 }
+

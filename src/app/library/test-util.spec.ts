@@ -1,5 +1,5 @@
 import { BehaviorSubject } from "rxjs";
-import { findMdmContractIdentifier, mapPropertiesToObject, overwritePropertiesOfTarget, Property } from "./test-util";
+import { findFieldValue, mapPropertiesToObject, overwritePropertiesOfTarget, Property } from "./test-util";
 
 describe("overwritePropertiesOfTarget", () => {
     let source: any;
@@ -67,15 +67,17 @@ describe('mapPropertiesToObject', () => {
 });
 
 
-fdescribe('findMdmContractIdentifier', () => {
+describe('findFieldValue', () => {
+    const fieldName: string = 'mdmContractIdentifier';
+
     it('should return the value of the mdmContractIdentifier field on the top level object', () => {
         let obj: any = { mdmContractIdentifier: '123' };
-        expect(findMdmContractIdentifier(obj)).toEqual('123');
+        expect(findFieldValue(obj, fieldName)).toEqual('123');
     });
 
     it('should return the value of the mdmContractIdentifier field in a nested object', () => {
         let obj: any = { nested: { mdmContractIdentifier: '456' } };
-        expect(findMdmContractIdentifier(obj)).toEqual('456');
+        expect(findFieldValue(obj, fieldName)).toEqual('456');
     });
 
     it('should return the value of the first mdmContractIdentifier field it finds', () => {
@@ -83,19 +85,19 @@ fdescribe('findMdmContractIdentifier', () => {
             mdmContractIdentifier: '123',
             nested: { mdmContractIdentifier: '456' }
         };
-        expect(findMdmContractIdentifier(obj)).toEqual('123');
+        expect(findFieldValue(obj, fieldName)).toEqual('123');
     });
 
     it('should return null if the mdmContractIdentifier field is not found', () => {
         let obj: any = {};
-        expect(findMdmContractIdentifier(obj)).toBeNull();
+        expect(findFieldValue(obj, fieldName)).toBeNull();
     });
 
     it('should return null if the object has cyclic references', () => {
         let obj: any = {};
         obj.nested = {};
         obj.nested.nested = obj;
-        expect(findMdmContractIdentifier(obj)).toBeNull();
+        expect(findFieldValue(obj, fieldName)).toBeNull();
     });
 
     it('should return the value of the mdmContractIdentifier field in a deeply nested object even with cyclic references', () => {
@@ -118,7 +120,7 @@ fdescribe('findMdmContractIdentifier', () => {
         };
         obj.nested5.nested5 = obj;
         obj.nested0.nested0 = obj.nested5;
-        expect(findMdmContractIdentifier(obj)).toEqual('789');
+        expect(findFieldValue(obj, fieldName)).toEqual('789');
     });
 
 
