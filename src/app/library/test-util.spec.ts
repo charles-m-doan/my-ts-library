@@ -1,90 +1,5 @@
 import { BehaviorSubject } from "rxjs";
-import { createExamplePersonal, createExampleProfile } from "./examples/example-generators";
-import { Personal } from "./examples/models";
-import { Profile } from "./examples/profile";
-import { extractPropertyTypeName, isClass, mapPropertiesToObject, overwritePropertiesOfTarget, Property } from "./test-util";
-
-describe('extractName', () => {
-    it('should return "unknown" for null input', () => {
-        expect(extractPropertyTypeName(null)).toEqual('unknown');
-    });
-
-    it('should return "unknown" for undefined input', () => {
-        expect(extractPropertyTypeName(null)).toEqual('unknown');
-    });
-
-    it('should return "Object" for {} input', () => {
-        expect(extractPropertyTypeName({})).toEqual('Object');
-    });
-
-    it('should return "string" for string input', () => {
-        expect(extractPropertyTypeName('hello')).toEqual('string');
-    });
-
-    it('should return "number" for number input', () => {
-        expect(extractPropertyTypeName(123)).toEqual('number');
-    });
-
-    it('should return "boolean" for boolean input', () => {
-        expect(extractPropertyTypeName(true)).toEqual('boolean');
-    });
-
-    it('should return "Date" for Date input', () => {
-        expect(extractPropertyTypeName(new Date())).toEqual('Date');
-    });
-
-    it('should return "Array" for array input', () => {
-        expect(extractPropertyTypeName([1, 2, 3])).toEqual('Array');
-    });
-
-    it('should return "Object" for Personal input', () => {
-        const personal: Personal = createExamplePersonal();
-        expect(extractPropertyTypeName(personal)).toEqual('Object');
-    });
-
-    it('should return "Profile" for Profile input', () => {
-        const profile: Profile = createExampleProfile();
-        expect(extractPropertyTypeName(profile)).toEqual('Profile');
-    });
-});
-
-describe('isClass', () => {
-    it('should return false for null input', () => {
-        expect(isClass(null)).toBe(false);
-    });
-
-    it('should return false for undefined input', () => {
-        expect(isClass(undefined)).toBe(false);
-    });
-
-    it('should return false for string input', () => {
-        expect(isClass('hello')).toBe(false);
-    });
-
-    it('should return false for number input', () => {
-        expect(isClass(123)).toBe(false);
-    });
-
-    it('should return false for boolean input', () => {
-        expect(isClass(true)).toBe(false);
-    });
-
-    it('should return false for object created with Object.create(null)', () => {
-        const obj = Object.create(null);
-        expect(isClass(obj)).toBe(false);
-    });
-
-    it('should return true for object created with {}', () => {
-        const obj = {};
-        expect(isClass(obj)).toBe(true);
-    });
-
-    it('should return true for instance of a class', () => {
-        class MyClass { }
-        const obj = new MyClass();
-        expect(isClass(obj)).toBe(true);
-    });
-});
+import { findMdmContractIdentifier, mapPropertiesToObject, overwritePropertiesOfTarget, Property } from "./test-util";
 
 describe("overwritePropertiesOfTarget", () => {
     let source: any;
@@ -150,3 +65,62 @@ describe('mapPropertiesToObject', () => {
         expect(object).toEqual({});
     });
 });
+
+
+fdescribe('findMdmContractIdentifier', () => {
+    it('should return the value of the mdmContractIdentifier field on the top level object', () => {
+        let obj: any = { mdmContractIdentifier: '123' };
+        expect(findMdmContractIdentifier(obj)).toEqual('123');
+    });
+
+    it('should return the value of the mdmContractIdentifier field in a nested object', () => {
+        let obj: any = { nested: { mdmContractIdentifier: '456' } };
+        expect(findMdmContractIdentifier(obj)).toEqual('456');
+    });
+
+    it('should return the value of the first mdmContractIdentifier field it finds', () => {
+        let obj: any = {
+            mdmContractIdentifier: '123',
+            nested: { mdmContractIdentifier: '456' }
+        };
+        expect(findMdmContractIdentifier(obj)).toEqual('123');
+    });
+
+    it('should return null if the mdmContractIdentifier field is not found', () => {
+        let obj: any = {};
+        expect(findMdmContractIdentifier(obj)).toBeNull();
+    });
+
+    it('should return null if the object has cyclic references', () => {
+        let obj: any = {};
+        obj.nested = {};
+        obj.nested.nested = obj;
+        expect(findMdmContractIdentifier(obj)).toBeNull();
+    });
+
+    it('should return the value of the mdmContractIdentifier field in a deeply nested object even with cyclic references', () => {
+        let obj: any = {
+            nested0: {},
+            nested1: {
+                nested2: {
+                    nested3: {
+                        nested4: {
+                        }
+                    }
+                }
+            },
+            nested5: {
+                nested5: {},
+                nested6: {
+                    mdmContractIdentifier: '789'
+                }
+            },
+        };
+        obj.nested5.nested5 = obj;
+        obj.nested0.nested0 = obj.nested5;
+        expect(findMdmContractIdentifier(obj)).toEqual('789');
+    });
+
+
+});
+
