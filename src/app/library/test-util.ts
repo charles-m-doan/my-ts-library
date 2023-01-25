@@ -2,6 +2,7 @@ import { Provider } from "@angular/core";
 import { Type, MockProvider } from "ng-mocks";
 import { cloneDeep } from 'lodash';
 import { DEFAULT_MOCK_PROPERTIES_MAP } from "./mock-default-properties-map";
+import { Moment } from "moment";
 
 export interface Property {
     name: string;
@@ -65,3 +66,6 @@ export function findFieldValue(obj, fieldName, searched = new Set()) {
     return null;
 }
 
+export function isLastDayOfMonth(date: Moment): boolean {
+    return date.isSame(date.clone().endOf('month'), 'day');
+}

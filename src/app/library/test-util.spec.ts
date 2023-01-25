@@ -1,5 +1,6 @@
+import * as moment from "moment";
 import { BehaviorSubject } from "rxjs";
-import { findFieldValue, mapPropertiesToObject, overwritePropertiesOfTarget, Property } from "./test-util";
+import { findFieldValue, isLastDayOfMonth, mapPropertiesToObject, overwritePropertiesOfTarget, Property } from "./test-util";
 
 describe("overwritePropertiesOfTarget", () => {
     let source: any;
@@ -122,7 +123,26 @@ describe('findFieldValue', () => {
         obj.nested0.nested0 = obj.nested5;
         expect(findFieldValue(obj, fieldName)).toEqual('789');
     });
-
-
 });
 
+describe('isLastDayOfMonth', () => {
+    it('should return true for the last day of a month', () => {
+        const lastDayOfMonth = moment('2022-01-31');
+        expect(isLastDayOfMonth(lastDayOfMonth)).toBe(true);
+    });
+
+    it('should return false for a day that is not the last day of a month', () => {
+        const middleOfMonth = moment('2022-01-15');
+        expect(isLastDayOfMonth(middleOfMonth)).toBe(false);
+    });
+
+    it('should return true for the last day of February in a leap year', () => {
+        const lastDayOfFebruary = moment('2024-02-29');
+        expect(isLastDayOfMonth(lastDayOfFebruary)).toBe(true);
+    });
+
+    it('should return false for the 28th day of February in a leap year', () => {
+        const lastDayOfFebruary = moment('2024-02-28');
+        expect(isLastDayOfMonth(lastDayOfFebruary)).toBe(false);
+    });
+}); 
