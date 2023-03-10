@@ -69,3 +69,13 @@ export function findFieldValue(obj, fieldName, searched = new Set()) {
 export function isLastDayOfMonth(date: Moment): boolean {
     return date.isSame(date.clone().endOf('month'), 'day');
 }
+
+
+export function resetMockProvider<T>(mockProvider: T): void {
+    Object.keys(mockProvider).forEach((key) => {
+      const method = mockProvider[key];
+      if (jasmine.isSpy(method)) {
+        method.calls.reset();
+      }
+    });
+  }

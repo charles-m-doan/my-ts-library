@@ -1,6 +1,8 @@
+import { TestBed } from "@angular/core/testing";
 import * as moment from "moment";
+import { MockProvider, ngMocks } from "ng-mocks";
 import { BehaviorSubject } from "rxjs";
-import { findFieldValue, isLastDayOfMonth, mapPropertiesToObject, overwritePropertiesOfTarget, Property } from "./test-util";
+import { findFieldValue, isLastDayOfMonth, mapPropertiesToObject, overwritePropertiesOfTarget, Property, resetMockProvider } from "./test-util";
 
 describe("overwritePropertiesOfTarget", () => {
     let source: any;
@@ -146,3 +148,46 @@ describe('isLastDayOfMonth', () => {
         expect(isLastDayOfMonth(lastDayOfFebruary)).toBe(false);
     });
 }); 
+
+export class SomeService {
+    public firstMethod(): void {}
+  
+    public secondMethod(): void {}
+  }
+
+  describe('resetMockProvider', () => {
+    let myService: any;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+          providers: [MockProvider(SomeService)],
+        }).compileComponents();
+      });
+  
+    beforeEach(() => {
+      ngMocks.autoSpy('jasmine');
+      myService = TestBed.inject(SomeService) as any;
+    });
+  
+    it('should reset the call count of all method stubs on the mock provider', () => {
+      myService.firstMethod();
+      myService.secondMethod();
+      myService.secondMethod();
+  
+      expect(myService.firstMethod).toHaveBeenCalled();
+      expect(myService.secondMethod).toHaveBeenCalledTimes(2);
+  
+      resetMockProvider(myService);
+  
+      expect(myService.firstMethod).not.toHaveBeenCalled();
+      expect(myService.secondMethod).not.toHaveBeenCalled();
+    });
+  
+    it('should not affect properties on the mock provider that are not method stubs', () => {
+      myService.myProperty = 'hello';
+  
+      resetMockProvider(myService);
+  
+      expect(myService.myProperty).toBe('hello');
+    });
+  });
